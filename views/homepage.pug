@@ -17,6 +17,6 @@ html
       tbody
         each record in records
           tr
-            td= record.properties.name
+            td= record.properties[propName]
             td= record.properties[prop2]
             td= record.properties[prop3]

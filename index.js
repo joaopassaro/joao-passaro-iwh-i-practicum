@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 const HUBSPOT_TOKEN = process.env.HUBSPOT_PRIVATE_APP_TOKEN;
 const CUSTOM_OBJECT_ID = process.env.HUBSPOT_CUSTOM_OBJECT_ID;
+const PROP_NAME = process.env.HUBSPOT_PROP_NAME || "name";
 const PROP_2 = process.env.HUBSPOT_PROP_2;
 const PROP_3 = process.env.HUBSPOT_PROP_3;
 const OBJECT_LABEL = process.env.HUBSPOT_OBJECT_LABEL || "Custom Objects";
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 const requiredEnvVars = {
   HUBSPOT_PRIVATE_APP_TOKEN: HUBSPOT_TOKEN,
   HUBSPOT_CUSTOM_OBJECT_ID: CUSTOM_OBJECT_ID,
+  HUBSPOT_PROP_NAME: PROP_NAME,
   HUBSPOT_PROP_2: PROP_2,
   HUBSPOT_PROP_3: PROP_3,
 };
@@ -39,7 +41,7 @@ const hubspotHeaders = {
 // 1. ROTA DA HOMEPAGE
 app.get("/", async (req, res) => {
   try {
-    const properties = ["name", PROP_2, PROP_3].join(",");
+    const properties = [PROP_NAME, PROP_2, PROP_3].join(",");
 
     const response = await axios.get(
       `https://api.hubapi.com/crm/v3/objects/${CUSTOM_OBJECT_ID}?properties=${properties}`,
@@ -49,6 +51,7 @@ app.get("/", async (req, res) => {
     res.render("homepage", {
       title: `${OBJECT_LABEL} | Integrating With HubSpot I Practicum`,
       objectLabel: OBJECT_LABEL,
+      propName: PROP_NAME,
       prop2: PROP_2,
       prop3: PROP_3,
       records: response.data.results,
@@ -83,7 +86,7 @@ app.post("/update-cobj", async (req, res) => {
       `https://api.hubapi.com/crm/v3/objects/${CUSTOM_OBJECT_ID}`,
       {
         properties: {
-          name: name,
+          [PROP_NAME]: name,
           [PROP_2]: lastname,
           [PROP_3]: address,
         },
